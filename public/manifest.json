@@ -1,0 +1,8 @@
+{
+  "name": "CampusFind — Sai University Lost & Found",
+  "short_name": "CampusFind",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030612",
+  "theme_color": "#030612"
+}

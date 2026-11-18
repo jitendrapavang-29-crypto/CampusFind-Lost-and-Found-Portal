@@ -1,0 +1,444 @@
+{
+  "info": {
+    "name": "CampusFind API Tests",
+    "_postman_id": "campusfind-api-tests",
+    "description": "API test examples for the Campus Lost and Found Portal. Run register/login first; Postman cookie jar retains the session.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "itemId",
+      "value": "REPLACE_WITH_ITEM_ID"
+    },
+    {
+      "key": "claimId",
+      "value": "REPLACE_WITH_CLAIM_ID"
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('API responds without a server error', function () {",
+          "    pm.expect(pm.response.code).to.be.below(500);",
+          "});",
+          "pm.test('API response is JSON', function () {",
+          "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+          "});"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Create listing without login (expect 401)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\": \"Unauthorized item\", \"category\": \"Other\", \"description\": \"Should not be accepted.\", \"location\": \"Gate\", \"date\": \"2026-11-14\", \"type\": \"lost\"}"
+        },
+        "url": "{{baseUrl}}/api/items"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Unauthenticated listing is rejected', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Register demo user",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Postman Student\", \"email\": \"postman.student@example.com\", \"password\": \"Pass12345!\"}"
+        },
+        "url": "{{baseUrl}}/api/auth/register"
+      }
+    },
+    {
+      "name": "Login demo student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"student@campusfind.demo\", \"password\": \"Student12345!\"}"
+        },
+        "url": "{{baseUrl}}/api/auth/login"
+      }
+    },
+    {
+      "name": "Get current user",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/auth/me"
+      }
+    },
+    {
+      "name": "Update profile (student login required)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Postman Student Updated\"}"
+        },
+        "url": "{{baseUrl}}/api/auth/profile"
+      }
+    },
+    {
+      "name": "Invalid registration input (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"A\", \"email\": \"not-an-email\", \"password\": \"123\"}"
+        },
+        "url": "{{baseUrl}}/api/auth/register"
+      }
+    },
+    {
+      "name": "Browse items",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/items"
+      }
+    },
+    {
+      "name": "Search items",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/items?q=phone&category=Electronics"
+      }
+    },
+    {
+      "name": "Search regex metacharacters literally",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/items?q=%28red%29%2B"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Literal search returns successfully', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Paginated browse",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/items?page=1&limit=2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Browse returns at most two items with pagination metadata', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const data = pm.response.json();",
+              "    pm.expect(data.page).to.eql(1);",
+              "    pm.expect(data.limit).to.eql(2);",
+              "    pm.expect(data.items.length).to.be.at.most(2);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create listing (requires login)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\": \"Postman test bottle\", \"category\": \"Accessories\", \"description\": \"Blue bottle used for API testing.\", \"location\": \"Library\", \"date\": \"2026-11-14\", \"type\": \"found\", \"status\": \"claimed\"}"
+        },
+        "url": "{{baseUrl}}/api/items"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Listing is created', function () {",
+              "    pm.response.to.have.status(201);",
+              "    pm.expect(pm.response.json().item.status).to.eql('open');",
+              "});",
+              "pm.collectionVariables.set('itemId', pm.response.json().item._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get item by ID",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/items/{{itemId}}"
+      }
+    },
+    {
+      "name": "Malformed item ID (expect 400)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/items/not-a-valid-id"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Malformed MongoDB ID is rejected', function () {",
+              "    pm.response.to.have.status(400);",
+            "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update listing (owner/admin login required)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\": \"Updated Postman test bottle\", \"status\": \"open\"}"
+        },
+        "url": "{{baseUrl}}/api/items/{{itemId}}"
+      }
+    },
+    {
+      "name": "Login as claimant",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"postman.student@example.com\", \"password\": \"Pass12345!\"}"
+        },
+        "url": "{{baseUrl}}/api/auth/login"
+      }
+    },
+    {
+      "name": "Submit claim (requires login)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"itemId\": \"{{itemId}}\", \"message\": \"I can identify a unique mark on this item.\"}"
+        },
+        "url": "{{baseUrl}}/api/claims"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Claim is submitted', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.collectionVariables.set('claimId', pm.response.json().claim._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get my dashboard data",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/items/mine"
+      }
+    },
+    {
+      "name": "Get my claims",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/claims/mine"
+      }
+    },
+    {
+      "name": "Login demo admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"admin@campusfind.demo\", \"password\": \"Admin12345!\"}"
+        },
+        "url": "{{baseUrl}}/api/auth/admin/login"
+      }
+    },
+    {
+      "name": "Get all claims (admin login required)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/claims"
+      }
+    },
+    {
+      "name": "Review claim (admin login required)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"rejected\"}"
+        },
+        "url": "{{baseUrl}}/api/claims/{{claimId}}"
+      }
+    },
+    {
+      "name": "Admin stats (admin login required)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/admin/stats"
+      }
+    },
+    {
+      "name": "Get all items (admin login required)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/admin/items"
+      }
+    },
+    {
+      "name": "Set item status (admin login required)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"closed\"}"
+        },
+        "url": "{{baseUrl}}/api/admin/items/{{itemId}}/status"
+      }
+    },
+    {
+      "name": "Delete listing (admin login required)",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/items/{{itemId}}"
+      }
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": "{{baseUrl}}/api/auth/logout"
+      }
+    }
+  ]
+}

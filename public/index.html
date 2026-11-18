@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="CampusFind — Sai University Futuristic Liquid Glass Lost & Found Portal">
+  <meta name="theme-color" content="#030612">
+  <link rel="manifest" href="/manifest.json">
+  <title>CampusFind | Next-Gen Lost &amp; Found</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/upload.css">
+  <link rel="stylesheet" href="/css/item-details.css">
+</head>
+<body>
+  <!-- Cosmic Aurora & Particle Atmosphere -->
+  <div class="aurora-stage" aria-hidden="true">
+    <div class="aurora-orb orb-cyan"></div>
+    <div class="aurora-orb orb-violet"></div>
+    <div class="aurora-orb orb-pink"></div>
+    <div class="aurora-orb orb-blue"></div>
+    <div class="cosmic-grid"></div>
+    <div class="light-beam"></div>
+    <canvas id="auroraParticles"></canvas>
+  </div>
+
+  <!-- VisionOS Dynamic Island Toast -->
+  <div id="islandToast" class="island-toast" role="status" aria-live="polite" hidden>
+    <span class="island-dot"></span>
+    <span id="islandToastText"></span>
+  </div>
+
+  <!-- Floating Capsule Navigation -->
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="none">
+          <path d="M16 3L27 9.5V22.5L16 29L5 22.5V9.5L16 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="16" cy="16" r="4.5" stroke="#00f0ff" stroke-width="2"/>
+          <path d="M16 7V11.5M16 20.5V25M7.5 11.5L11.5 13.8M20.5 18.2L24.5 20.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>CampusFind</strong>
+        <small>SAI UNIVERSITY</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mainNav">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="4" y1="7" x2="20" y2="7"></line>
+        <line x1="4" y1="12" x2="20" y2="12"></line>
+        <line x1="4" y1="17" x2="20" y2="17"></line>
+      </svg>
+    </button>
+
+    <nav id="mainNav">
+      <a href="#browse" class="nav-link">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        Browse
+      </a>
+      <a href="#report" class="nav-link">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>
+        Report Item
+      </a>
+      <a href="#dashboard" id="dashboardLink" class="nav-link" hidden>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+        Dashboard
+      </a>
+      <div class="nav-actions">
+        <button class="btn btn-glass" id="adminLoginButton" type="button">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Admin login
+        </button>
+        <button class="btn btn-neon" id="authButton" type="button">Login / Register</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 2035 Spatial OS Hero Deck + Live Telemetry Dock -->
+    <section class="hero">
+      <div class="hero-copy">
+        <p id="globalMessage" class="global-message" role="status" aria-live="polite"></p>
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>SAI UNIVERSITY · SPATIAL RECOVERY OS 2035</span>
+        </div>
+        <h1>Lost something?<br><span class="holo-text">Let's bring it home.</span></h1>
+        <p class="hero-sub">An optical Liquid Glass campus recovery console—engineered with real-time spatial telemetry, instant visual matching, and verified ownership claims.</p>
+        <div class="hero-actions">
+          <a class="btn btn-neon btn-lg" href="#browse">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            Explore Discovery Matrix
+          </a>
+          <a class="btn btn-glass btn-lg" href="#report">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            Log Lost or Found
+          </a>
+        </div>
+
+        <!-- Integrated Asymmetric Bento Telemetry Strip -->
+        <div class="stats-row">
+          <div class="stat-pill">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"></path><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg></div>
+            <div><strong id="statItems">—</strong><span>Active beacons</span></div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+            <div><strong>24/7</strong><span>Live campus sync</span></div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg></div>
+            <div><strong>Verified</strong><span>Moderated claims</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="holo-prism-stage">
+          <div class="holo-ring ring-outer"></div>
+          <div class="holo-ring ring-mid"></div>
+          <div class="holo-ring ring-inner"></div>
+          <div class="holo-core">
+            <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+              <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>
+            <small>OPTICAL SCAN</small>
+          </div>
+          <div class="float-card card-a">
+            <span class="float-icon cyan"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path></svg></span>
+            <div><strong>Backpack</strong><small>Library · Found</small></div>
+          </div>
+          <div class="float-card card-b">
+            <span class="float-icon violet"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="m21 2-9.6 9.6"></path><path d="m15.5 7.5 3 3L22 7l-3-3"></path></svg></span>
+            <div><strong>Keychain</strong><small>Main Gate · Open</small></div>
+          </div>
+          <div class="float-card card-c">
+            <span class="float-icon pink"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg></span>
+            <div><strong>Earbuds</strong><small>Block A · Verified</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Asymmetric Discovery Matrix -->
+    <section class="section" id="browse">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">01 // SPATIAL DISCOVERY MATRIX</p>
+          <h2>Recently reported items</h2>
+        </div>
+        <div class="browse-meta">
+          <div class="segmented-control" id="quickTypePills" role="group" aria-label="Quick filter by listing type">
+            <button type="button" class="seg-btn active" data-type-pill="">All</button>
+            <button type="button" class="seg-btn" data-type-pill="lost">Lost</button>
+            <button type="button" class="seg-btn" data-type-pill="found">Found</button>
+          </div>
+          <span class="count-badge" id="resultCount"></span>
+        </div>
+      </div>
+
+      <div class="filters glass-surface">
+        <div class="input-with-icon search-box">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input id="searchInput" type="search" maxlength="100" placeholder="Search name, details or location..." aria-label="Search items">
+        </div>
+        <select id="categoryFilter" aria-label="Filter by category"><option value="">All categories</option><option>Electronics</option><option>ID & Cards</option><option>Bags</option><option>Books</option><option>Clothing</option><option>Accessories</option><option>Other</option></select>
+        <select id="typeFilter" aria-label="Filter by listing type"><option value="">Lost &amp; found</option><option value="lost">Lost</option><option value="found">Found</option></select>
+        <select id="sortFilter" aria-label="Sort listings by report date"><option value="newest">Newest First</option><option value="oldest">Oldest First</option></select>
+        <div class="input-with-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <input id="locationFilter" maxlength="120" placeholder="Campus location" aria-label="Filter by location">
+        </div>
+        <button class="btn btn-neon" id="searchButton" type="button">Search</button>
+      </div>
+
+      <div class="item-grid" id="itemGrid"><div class="empty-state">Loading listings…</div></div>
+
+      <div class="pagination" id="itemPagination" hidden>
+        <button class="btn btn-glass" id="previousPage" type="button">Previous</button>
+        <span class="muted" id="pageInfo"></span>
+        <button class="btn btn-glass" id="nextPage" type="button">Next</button>
+      </div>
+    </section>
+
+    <!-- Asymmetric Split-Pane Report Studio -->
+    <section class="section report-section" id="report">
+      <div class="report-split">
+        <aside class="report-aside glass-surface">
+          <p class="eyebrow">02 // BEACON DISPATCH STUDIO</p>
+          <h2>Report a lost or found item</h2>
+          <p class="muted">Broadcast a high-priority recovery beacon across Sai University. Attach a photo and precise location coordinates so the owner or finder can verify ownership in seconds.</p>
+          <div class="protocol-steps">
+            <div class="protocol-step">
+              <span class="step-num">01</span>
+              <div><strong>Classify &amp; Locate</strong><span>Tag category, campus zone, and date of incident.</span></div>
+            </div>
+            <div class="protocol-step">
+              <span class="step-num">02</span>
+              <div><strong>Optical Evidence</strong><span>Upload a photo (HEIC/JPEG/PNG auto-optimized to 1600px).</span></div>
+            </div>
+            <div class="protocol-step">
+              <span class="step-num">03</span>
+              <div><strong>Verified Handover</strong><span>Review ownership claims inside your personal Command Deck.</span></div>
+            </div>
+          </div>
+        </aside>
+
+        <form id="reportForm" class="form-card glass-surface">
+          <div class="form-grid">
+            <label>Item name<input name="title" required minlength="2" maxlength="100" placeholder="e.g. Black water bottle"></label>
+            <label>Listing type<select name="type" required><option value="lost">I lost this</option><option value="found">I found this</option></select></label>
+            <label>Category<select name="category" required><option>Electronics</option><option>ID & Cards</option><option>Bags</option><option>Books</option><option>Clothing</option><option>Accessories</option><option>Other</option></select></label>
+            <label>Location<input name="location" required minlength="2" maxlength="120" placeholder="e.g. Library, Block A"></label>
+            <label>Date<input name="date" type="date" required></label>
+            <label class="full">Item photo <span class="muted">(optional · up to 5 MB)</span><input id="imageInput" name="image" type="file" accept="image/*" aria-describedby="imageHelp"><span class="muted" id="imageHelp">Choose an image from your device. HEIC and common image formats are optimized and saved as JPEG.</span></label>
+            <div class="full image-preview" id="imagePreview" hidden><img alt="Selected item preview"><span class="image-preview-name"></span><button class="btn btn-glass" id="clearImageButton" type="button">Remove photo</button></div>
+            <label class="full">Description<textarea name="description" required minlength="5" maxlength="1000" rows="4" placeholder="Describe the item and any identifying details…"></textarea></label>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-neon btn-lg" type="submit">Broadcast Report</button>
+            <p class="form-message" id="reportMessage" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- User & Admin Spatial Command Deck -->
+    <section class="section dashboard-section" id="dashboard" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">03 // PERSONAL COMMAND DECK</p>
+          <h2>My dashboard</h2>
+        </div>
+        <button class="btn btn-glass" id="logoutButton" type="button">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Log out
+        </button>
+      </div>
+
+      <div class="dashboard-bento">
+        <div class="panel glass-surface">
+          <div class="panel-head">
+            <h3>My listings</h3>
+            <span class="panel-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></span>
+          </div>
+          <div id="myListings"></div>
+        </div>
+        <div class="panel glass-surface">
+          <div class="panel-head">
+            <h3>My claims</h3>
+            <span class="panel-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+          </div>
+          <div id="myClaims"></div>
+        </div>
+        <div class="panel profile-panel glass-surface">
+          <div class="panel-head">
+            <h3>Identity profile</h3>
+            <span class="panel-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+          </div>
+          <form id="profileForm" class="profile-form">
+            <label>Full name<input name="name" required minlength="2" maxlength="80"></label>
+            <button class="btn btn-neon" type="submit">Save profile</button>
+            <p class="form-message" id="profileMessage" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+
+      <!-- Admin Console with Glass Sidebar -->
+      <div class="panel admin-panel glass-surface" id="adminPanel" hidden>
+        <div class="admin-shell">
+          <aside class="admin-sidebar">
+            <div class="admin-badge">
+              <span class="pulse-dot"></span>
+              <span>ADMIN CONSOLE</span>
+            </div>
+            <h3>Control Deck</h3>
+            <nav class="admin-nav" aria-label="Admin sections">
+              <a href="#adminStats" class="admin-nav-link active">Telemetry</a>
+              <a href="#adminItems" class="admin-nav-link">Manage Reports</a>
+              <a href="#adminClaims" class="admin-nav-link">Pending Claims</a>
+            </nav>
+          </aside>
+          <div class="admin-main">
+            <div class="admin-stats" id="adminStats"></div>
+            <div id="adminItems"></div>
+            <div id="adminClaims"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand">
+      <strong>CampusFind</strong>
+      <span>Next-Gen Lost &amp; Found Portal · Sai University</span>
+    </div>
+    <span class="footer-meta">Powered by Liquid Glass UI · MongoDB &amp; Express</span>
+  </footer>
+
+  <!-- Auth Modal -->
+  <dialog id="authDialog" aria-labelledby="authTitle">
+    <form method="dialog" class="dialog-close"><button aria-label="Close">×</button></form>
+    <div class="auth-tabs">
+      <button type="button" class="active" data-mode="login">Login</button>
+      <button type="button" data-mode="register">Create account</button>
+      <button type="button" data-mode="admin">Admin login</button>
+    </div>
+    <form id="authForm" class="auth-form">
+      <h2 id="authTitle">Welcome back</h2>
+      <label id="nameWrap" hidden>Full name<input name="name" minlength="2" maxlength="80" autocomplete="name"></label>
+      <label>Email<input name="email" type="email" required autocomplete="email"></label>
+      <label>Password
+        <div class="password-field">
+          <input id="authPassword" name="password" type="password" minlength="8" required autocomplete="current-password">
+          <button type="button" class="password-toggle" id="togglePassword" aria-label="Show password" aria-pressed="false" title="Show password">
+            <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+      </label>
+      <button class="btn btn-neon" type="submit" id="authSubmit">Login</button>
+      <p class="form-message" id="authMessage" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <!-- Edit Report Modal -->
+  <dialog id="adminItemDialog" aria-labelledby="adminItemTitle">
+    <form method="dialog" class="dialog-close"><button aria-label="Close">×</button></form>
+    <form id="adminItemForm" class="auth-form">
+      <h2 id="adminItemTitle">Edit report</h2>
+      <input type="hidden" name="id">
+      <label>Item name<input name="title" required minlength="2" maxlength="100"></label>
+      <label>Listing type<select name="type" required><option value="lost">Lost</option><option value="found">Found</option></select></label>
+      <label>Category<select name="category" required><option>Electronics</option><option>ID & Cards</option><option>Bags</option><option>Books</option><option>Clothing</option><option>Accessories</option><option>Other</option></select></label>
+      <label>Location<input name="location" required minlength="2" maxlength="120"></label>
+      <label>Date<input name="date" type="date" required></label>
+      <label>Status<select name="status" required><option value="open">Open</option><option value="claimed">Claimed</option><option value="closed">Closed</option></select></label>
+      <label>Description<textarea name="description" rows="4" required minlength="5" maxlength="1000"></textarea></label>
+      <button class="btn btn-neon" type="submit">Save changes</button>
+      <p class="form-message" id="adminItemMessage" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <!-- Claim Modal -->
+  <dialog id="claimDialog" aria-labelledby="claimTitle">
+    <form method="dialog" class="dialog-close"><button aria-label="Close">×</button></form>
+    <form id="claimForm" class="auth-form">
+      <h2 id="claimTitle">Submit a claim</h2>
+      <input type="hidden" name="itemId">
+      <label>Why is this your item?<textarea name="message" rows="4" minlength="5" maxlength="1000" required placeholder="Describe identifying details only the owner would know…"></textarea></label>
+      <button class="btn btn-neon" type="submit">Send claim</button>
+      <p class="form-message" id="claimMessage" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <!-- Item Details Modal -->
+  <dialog id="itemDetailsDialog" aria-labelledby="detailTitle">
+    <button class="item-details-close" type="button" aria-label="Close item details">×</button>
+    <div class="item-details-layout">
+      <div class="item-details-image" id="detailImage"></div>
+      <div class="item-details-content">
+        <div class="item-details-meta">
+          <span class="pill" id="detailType"></span>
+          <span class="pill" id="detailStatus"></span>
+        </div>
+        <h2 id="detailTitle"></h2>
+        <p class="item-details-category" id="detailCategory"></p>
+        <p class="item-details-description" id="detailDescription"></p>
+        <dl class="item-details-facts">
+          <div><dt>Location</dt><dd id="detailLocation"></dd></div>
+          <div><dt>Reported</dt><dd id="detailDate"></dd></div>
+          <div><dt>Posted by</dt><dd id="detailOwner"></dd></div>
+        </dl>
+        <button class="btn btn-neon" id="detailClaimButton" type="button" hidden>Submit a claim</button>
+      </div>
+    </div>
+  </dialog>
+
+
+  <!-- iOS 26 Liquid Glass Sliding-Lens Mobile Dock -->
+  <div class="liquid-dock-wrap" id="liquidDockWrap">
+    <nav class="liquid-dock" id="liquidDock" aria-label="Mobile navigation">
+      <div class="liquid-lens" id="liquidLens" aria-hidden="true"></div>
+      <a href="#browse" class="dock-tab active" data-dock-tab="0" data-target="browse">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Browse</span>
+      </a>
+      <a href="#report" class="dock-tab" data-dock-tab="1" data-target="report">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+        <span>Report</span>
+      </a>
+      <button type="button" class="dock-tab" data-dock-tab="2" data-target="dashboard">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <span>Activity</span>
+      </button>
+    </nav>
+    <button type="button" class="liquid-dock-search" id="dockSearchBtn" aria-label="Quick search items">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+    </button>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/motion.js"></script>
+</body>
+</html>
